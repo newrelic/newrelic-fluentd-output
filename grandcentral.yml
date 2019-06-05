@@ -1,0 +1,29 @@
+slack_channel: logging-notifications
+deploy_mechanism: none
+test_suites:
+- command: |
+    mkdir -p ~/.gem
+    curl -u $ARTIFACTORY_USERNAME:$ARTIFACTORY_PASSWORD https://artifacts.datanerd.us/api/gems/newrelic-gems-local/api/v1/api_key.yaml -o ~/.gem/credentials
+    chmod 0600 ~/.gem/credentials
+    bundle install && bundle exec rspec
+  environment:
+    dockerfile: Dockerfile
+  name: Unit Tests
+build:
+  environment:
+    dockerfile: Dockerfile
+    secret_env_vars:
+    - name: ARTIFACTORY_USERNAME
+      shared_path: artifactory
+    - name: ARTIFACTORY_PASSWORD
+      shared_path: artifactory
+  publish:
+    command: |
+      mkdir -p ~/.gem
+      curl -u $ARTIFACTORY_USERNAME:$ARTIFACTORY_PASSWORD https://artifacts.datanerd.us/api/gems/newrelic-gems-local/api/v1/api_key.yaml -o ~/.gem/credentials
+      chmod 0600 ~/.gem/credentials
+      bundle install
+      gem release --host https://artifacts.datanerd.us/api/gems/newrelic-gems-local
+  read_version:
+    command: cat ./lib/newrelic-fluentd-output/version.rb | grep VERSION | awk '{
+      gsub("\"", "", $3); print $3 }'

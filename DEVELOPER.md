@@ -9,11 +9,13 @@
 * Run tests: `bundle exec rspec`
 * Build the gem: `gem build newrelic-fluentd-output.gemspec`
 
+**NOTE**: Be mindful that using `log.info` in the plugin causes an unintended Sorcerer's Apprentice Syndrome style bug where exponentially larger copies of log messages are sent until the td-agent is unloaded. Super weird, but now you know.
+
 
 # Testing it with a local Fluentd install
 
 * Remove previous version: `td-agent-gem uninstall fluent-plugin-newrelic`
-* Add new version: `td-agent-gem install fluent-plugin-newrelic-<version>.gem `
+* Add new version: `td-agent-gem install fluent-plugin-newrelic-<version>.gem`
 * Restart Fluentd
 * Cause a change that you've configured Fluentd to pick up (for instance, append to a file you're having it monitor)
 * Look in `https://wanda-ui.staging-service.newrelic.com/launcher/logger.log-launcher` for your log message

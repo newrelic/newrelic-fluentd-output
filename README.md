@@ -2,6 +2,10 @@
 
 A [Fluentd](https://fluentd.org/) output plugin that sends logs to New Relic
 
+## Prerequisites
+
+Fleuntd >= v1.0
+
 ## Installation
 
 ```

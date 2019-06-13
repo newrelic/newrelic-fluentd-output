@@ -20,6 +20,13 @@
 * Cause a change that you've configured Fluentd to pick up (for instance, append to a file you're having it monitor)
 * Look in `https://wanda-ui.staging-service.newrelic.com/launcher/logger.log-launcher` for your log message
 
+# Changes and merging branches
+
+If you are making any changes to the plugin there are a few steps to follow to ensure we are testing correctly:
+* Make sure that you are working from the internal Github repo so that PRs go through the build process
+* When your build process passes, then add changes to the public repo 
+
+
 # Deploying to Gemfury
 
 After merging to master you must also push the code to Gemfury, which is where customers will get our gem from.

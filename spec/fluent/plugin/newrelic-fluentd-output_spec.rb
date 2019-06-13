@@ -263,7 +263,8 @@ class Fluent::Plugin::NewrelicOutputTest < Test::Unit::TestCase
   end
 
   def parsed_gzipped_json(body)
-    JSON.parse(gunzip(body))
+    request = JSON.parse(gunzip(body))
+    request[0] # The schema requires an array of log blocks, but this plugin only ever creates a single block
   end
 
   def create_driver(conf)

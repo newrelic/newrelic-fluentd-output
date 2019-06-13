@@ -96,7 +96,7 @@ module Fluent
         end
         io = StringIO.new
         gzip = Zlib::GzipWriter.new(io)
-        gzip << payload.to_json
+        gzip << [payload].to_json
         gzip.close
         attempt_send(io.string, 0)
       end

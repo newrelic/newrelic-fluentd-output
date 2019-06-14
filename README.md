@@ -28,7 +28,7 @@ $ td-agent-gem install -s https://1keEQc-cII8DjYRJVdpUXAw6DUPV6JmjpE@repo.fury.i
 | retries | The maximum number of times to retry a failed request, exponentially increasing delay between each retry | 5 |
 | retry_seconds | The inital delay between retries, in seconds | 5 |
 | max_delay | The maximum delay between retries, in seconds | 30 |
-| base_uri | New Relic ingestion endpoint | 'https://insights-collector.newrelic.com/logs/v1' |
+| base_uri | New Relic ingestion endpoint | 'https://log-api.newrelic.com/log/v1' |
 
 ### Example
 

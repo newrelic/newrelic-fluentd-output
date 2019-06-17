@@ -29,7 +29,7 @@ module Fluent
       helpers :thread
 
       config_param :api_key, :string
-      config_param :base_uri, :string, :default => "https://insights-collector.newrelic.com/logs/v1"
+      config_param :base_uri, :string, :default => "https://log-api.newrelic.com/log/v1"
       config_param :retry_seconds, :integer, :default => 5
       config_param :max_delay, :integer, :default => 30
       config_param :retries, :integer, :default => 5
@@ -96,7 +96,7 @@ module Fluent
         end
         io = StringIO.new
         gzip = Zlib::GzipWriter.new(io)
-        gzip << payload.to_json
+        gzip << [payload].to_json
         gzip.close
         attempt_send(io.string, 0)
       end

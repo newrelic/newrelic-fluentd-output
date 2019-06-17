@@ -25,7 +25,7 @@ After updating the New Relic repo with changes, changes will need to be pushed t
 * Add new version: `td-agent-gem install fluent-plugin-newrelic-<version>.gem`
 * Restart Fluentd
 * Cause a change that you've configured Fluentd to pick up (for instance, append to a file you're having it monitor)
-* Look in `https://wanda-ui.staging-service.newrelic.com/launcher/logger.log-launcher` for your log message
+* Look in `https://staging-one.newrelic.com/launcher/logger.log-launcher` for your log message
 
 # Deploying to Gemfury
 

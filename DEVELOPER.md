@@ -11,6 +11,13 @@
 
 **NOTE**: Be mindful that using `log.info` in the plugin causes an unintended Sorcerer's Apprentice Syndrome style bug where exponentially larger copies of log messages are sent until the td-agent is unloaded. Super weird, but now you know.
 
+## Pushing changes to the public repo
+After updating the New Relic repo with changes, changes will need to be pushed to the public GitHub repo at: https://github.com/newrelic/newrelic-fluentd-output
+
+* `git remote add public git@github.com:newrelic/newrelic-fluentd-output.git`
+* `git push public master:name-of-branch-to-create`
+* Create a PR from that branch in https://github.com/newrelic/newrelic-fluentd-output
+* Get the PR reviewed, merged, and delete the branch!
 
 # Testing it with a local Fluentd install
 
@@ -19,13 +26,6 @@
 * Restart Fluentd
 * Cause a change that you've configured Fluentd to pick up (for instance, append to a file you're having it monitor)
 * Look in `https://wanda-ui.staging-service.newrelic.com/launcher/logger.log-launcher` for your log message
-
-# Changes and merging branches
-
-If you are making any changes to the plugin there are a few steps to follow to ensure we are testing correctly:
-* Make sure that you are working from the internal Github repo so that PRs go through the build process
-* When your build process passes, then add changes to the public repo 
-
 
 # Deploying to Gemfury
 

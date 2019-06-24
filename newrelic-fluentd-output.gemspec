@@ -10,7 +10,7 @@ Gem::Specification.new do |spec|
   spec.email         = ["logging-team@newrelic.com"]
 
   if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = "https://rubygems.org"
+    spec.metadata['allowed_push_host'] = "https://rubygems.org/"
   end
 
   spec.summary       = "Sends FluentD events to New Relic"

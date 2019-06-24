@@ -2,6 +2,8 @@
 
 A [Fluentd](https://fluentd.org/) output plugin that sends logs to New Relic
 
+This project is provided AS-IS WITHOUT WARRANTY OR SUPPORT, although you can report issues and contribute to the project here on GitHub.
+
 ## Prerequisites
 
 Fluentd >= v1.0
@@ -31,7 +33,7 @@ For more info, review [Fluentd's official documentation](https://docs.fluentd.or
 |---|---|---|
 | concurrent_requests | The number of threads to make requests from | 1 |
 | retries | The maximum number of times to retry a failed request, exponentially increasing delay between each retry | 5 |
-| retry_seconds | The inital delay between retries, in seconds | 5 |
+| retry_seconds | The initial delay between retries, in seconds | 5 |
 | max_delay | The maximum delay between retries, in seconds | 30 |
 | base_uri | New Relic ingestion endpoint | 'https://log-api.newrelic.com/log/v1' |
 

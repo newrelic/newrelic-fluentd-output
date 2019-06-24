@@ -7,10 +7,13 @@ A [Fluentd](https://fluentd.org/) output plugin that sends logs to New Relic
 Fluentd >= v1.0
 
 ## Installation
+Add the plugin to your fluentd agent:
 
-```
-$ td-agent-gem install -s https://1keEQc-cII8DjYRJVdpUXAw6DUPV6JmjpE@repo.fury.io/nrsf fluent-plugin-newrelic
-```
+`gem install fluent-plugin-newrelic`
+
+If you are using td-agent, run the following command from your td-agent dir:
+
+`gem install fluent-plugin-newrelic`
 
 ## Configuration
 

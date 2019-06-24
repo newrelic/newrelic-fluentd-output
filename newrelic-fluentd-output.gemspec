@@ -6,11 +6,11 @@ require 'newrelic-fluentd-output/version'
 Gem::Specification.new do |spec|
   spec.name          = "fluent-plugin-newrelic"
   spec.version       = NewrelicFluentdOutput::VERSION
-  spec.authors       = ["Logging Team"]
+  spec.authors       = ["New Relic Logging Team"]
   spec.email         = ["logging-team@newrelic.com"]
 
   if spec.respond_to?(:metadata)
-    spec.metadata['allowed_push_host'] = "https://artifacts.datanerd.us/api/gems/newrelic-gems-local/"
+    spec.metadata['allowed_push_host'] = "https://rubygems.org"
   end
 
   spec.summary       = "Sends FluentD events to New Relic"

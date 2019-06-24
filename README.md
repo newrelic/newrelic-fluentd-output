@@ -9,11 +9,13 @@ Fluentd >= v1.0
 ## Installation
 Add the plugin to your fluentd agent:
 
-`gem install fluent-plugin-newrelic`
+`fluent-gem install fluent-plugin-newrelic`
 
-If you are using td-agent, run the following command from your td-agent dir:
+If you are using td-agent:
 
-`gem install fluent-plugin-newrelic`
+`td-agent-gem install fluent-plugin-newrelic`
+
+For more info, review [Fluentd's official documentation](https://docs.fluentd.org/deployment/plugin-management).
 
 ## Configuration
 

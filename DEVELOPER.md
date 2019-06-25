@@ -27,14 +27,8 @@ After updating the New Relic repo with changes, changes will need to be pushed t
 * Cause a change that you've configured Fluentd to pick up (for instance, append to a file you're having it monitor)
 * Look in `https://staging-one.newrelic.com/launcher/logger.log-launcher` for your log message
 
-# Deploying to Gemfury
+# Push changes to RubyGems
+After updating the source code and gem version in `version.rb`, push the changes to RubyGems. Note, you must be a gem owner to publish changes on [RubyGems.org](https://rubygems.org/profiles/NR-LOGGING)
 
-After merging to master you must also push the code to Gemfury, which is where customers will get our gem from.
-* Get the version you just merged to master in Github
-  * `git checkout master`
-  * `git pull`
-* Push the new master to Gemfury
-   * Add Gemfury as remote (only needs to be done once): `git remote add fury https://<your-gemfury-username>@git.fury.io/nrsf/newrelic-fluentd-output.git`
-   * Push the new commits to Gemfury: `git push fury master`
-   * For the password, use the "Personal full access token" seen here https://manage.fury.io/manage/newrelic/tokens/shared
-   * Make sure you see your new code show up here: `https://manage.fury.io/dashboard/nrsf`
+* Build the gem: `gem build newrelic-fluentd-output.gemspec`
+* Publish the gem: `gem push fluent-plugin-newrelic-<VERSION>.gem` with the updated version (ex: `gem push fluent-plugin-newrelic-0.2.2.gem`)

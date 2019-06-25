@@ -9,10 +9,15 @@ This project is provided AS-IS WITHOUT WARRANTY OR SUPPORT, although you can rep
 Fluentd >= v1.0
 
 ## Installation
+Add the plugin to your fluentd agent:
 
-```
-$ td-agent-gem install -s https://1keEQc-cII8DjYRJVdpUXAw6DUPV6JmjpE@repo.fury.io/nrsf fluent-plugin-newrelic
-```
+`fluent-gem install fluent-plugin-newrelic`
+
+If you are using td-agent:
+
+`td-agent-gem install fluent-plugin-newrelic`
+
+For more info, review [Fluentd's official documentation](https://docs.fluentd.org/deployment/plugin-management).
 
 ## Configuration
 

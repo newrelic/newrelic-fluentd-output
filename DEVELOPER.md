@@ -31,4 +31,4 @@ After updating the New Relic repo with changes, changes will need to be pushed t
 After updating the source code and gem version in `version.rb`, push the changes to RubyGems. Note, you must be a gem owner to publish changes on [RubyGems.org](https://rubygems.org/profiles/NR-LOGGING)
 
 * Build the gem: `gem build newrelic-fluentd-output.gemspec`
-* Publish the gem: `gem push fluent-plugin-newrelic-<VERSION>.gem` with the updated version (ex: `gem push fluent-plugin-newrelic-0.2.2.gem`)
+* Publish the gem: `gem push --host https://rubygems.org fluent-plugin-newrelic-<VERSION>.gem` with the updated version (ex: `gem push --host https://rubygems.org fluent-plugin-newrelic-0.2.2.gem`)

@@ -79,7 +79,6 @@ module Fluent
 
       def write(chunk)
         payload = {
-          'logs' => [],
           'common' => {
             'attributes' => {
               'plugin' => {
@@ -87,7 +86,8 @@ module Fluent
                 'version' => NewrelicFluentdOutput::VERSION,
               }
             }
-          }
+          },
+          'logs' => []
         }
         chunk.msgpack_each do |ts, record|
           next unless record.is_a? Hash

@@ -18,6 +18,7 @@ require 'net/http'
 require 'uri'
 require 'zlib'
 require 'newrelic-fluentd-output/version'
+require 'yajl'
 
 module Fluent
   module Plugin
@@ -108,7 +109,7 @@ module Fluent
         end
         io = StringIO.new
         gzip = Zlib::GzipWriter.new(io)
-        gzip << [payload].to_json
+        gzip << Yajl.dump([payload])
         gzip.close
         send(io.string)
       end

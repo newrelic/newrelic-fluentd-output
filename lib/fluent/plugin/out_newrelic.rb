@@ -110,7 +110,7 @@ module Fluent
         gzip = Zlib::GzipWriter.new(io)
         gzip << [payload].to_json
         gzip.close
-        send(io.string)
+        send_payload(io.string)
       end
       
       def handle_response(response)
@@ -119,7 +119,7 @@ module Fluent
         end
       end
 
-      def send(payload)
+      def send_payload(payload)
         http = Net::HTTP.new(@end_point.host, 443)
         http.use_ssl = true
         http.verify_mode = OpenSSL::SSL::VERIFY_PEER

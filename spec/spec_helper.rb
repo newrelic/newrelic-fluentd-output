@@ -1,5 +1,6 @@
 $LOAD_PATH.unshift(File.expand_path("../../", __FILE__))
-require "test-unit"
+# require "test-unit"
+require 'test/unit'
 require "fluent/test"
 require "fluent/test/driver/output"
 require "fluent/test/helpers"

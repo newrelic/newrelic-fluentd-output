@@ -7,4 +7,3 @@ require 'fluent/plugin/out_newrelic'
 
 Test::Unit::TestCase.include(Fluent::Test::Helpers)
 Test::Unit::TestCase.extend(Fluent::Test::Helpers)
-Test::Unit::AutoRunner.need_auto_run = false if defined?(Test::Unit::AutoRunner)

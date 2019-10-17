@@ -29,7 +29,7 @@ steps:
     targetType: 'inline'
     script: |
       ls
-      bundle exec rspec ./spec/fluent/plugin/newrelic-fluentd-output_spec.rb --format RspecJunitFormatter  --out test-results.xml
+      bundle exec rspec
 
 - task: PublishTestResults@2
   inputs:

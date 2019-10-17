@@ -14,9 +14,9 @@ steps:
   inputs:
     versionSpec: '>= 2.5'
 
-# - script: |
-#     curl -L https://toolbelt.treasuredata.com/sh/install-ubuntu-bionic-td-agent3.sh | sh
-#   displayName: 'install fluentd'
+- script: |
+    curl -L https://toolbelt.treasuredata.com/sh/install-ubuntu-bionic-td-agent3.sh | sh
+  displayName: 'install fluentd'
 
 - script: |
     gem install bundler

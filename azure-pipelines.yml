@@ -16,6 +16,7 @@ steps:
 
 - script: |
     gem install bundler
+    bundle update
     bundle install --retry=3 --jobs=4
   displayName: 'bundle install'
 
@@ -28,7 +29,7 @@ steps:
     targetType: 'inline'
     script: |
       ls
-      bundle exec rspec spec/fluent/plugin/newrelic-fluentd-output_spec.rb --format RspecJunitFormatter  --out test-results.xml
+      bundle exec rspec ./spec/fluent/plugin/newrelic-fluentd-output_spec.rb --format RspecJunitFormatter  --out test-results.xml
 
 - task: PublishTestResults@2
   inputs:

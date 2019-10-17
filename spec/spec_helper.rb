@@ -3,7 +3,7 @@ require "test-unit"
 require "fluent/test"
 require "fluent/test/driver/output"
 require "fluent/test/helpers"
-require 'fluent/plugin/out_newrelic'
+require 'fluent/plugin/newrelic-fluentd-output'
 
 Test::Unit::TestCase.include(Fluent::Test::Helpers)
 Test::Unit::TestCase.extend(Fluent::Test::Helpers)

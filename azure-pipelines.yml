@@ -27,7 +27,7 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      bundle exec rspec --format RspecJunitFormatter  --out test-results.xml
+      bundle exec rspec spec --format RspecJunitFormatter  --out test-results.xml
 
 - task: PublishTestResults@2
   inputs:

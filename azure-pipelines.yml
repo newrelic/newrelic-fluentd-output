@@ -32,7 +32,7 @@ steps:
   inputs:
     targetType: 'inline'
     script: |
-      bundle exec rspec
+      bundle exec rake
 
 - task: PublishTestResults@2
   inputs:

@@ -2,7 +2,6 @@ require 'spec_helper'
 require 'webmock/test_unit'
 require 'zlib'
 require 'newrelic-fluentd-output/version'
-require 'spec/test/unit'
 
 class Fluent::Plugin::NewrelicOutputTest < Test::Unit::TestCase
 

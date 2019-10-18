@@ -50,4 +50,4 @@ steps:
       eval "$(rbenv init -)"
       mv $(rubyGemsCredentials.secureFilePath) ~/.gem/credentials
       sudo chmod 600 ~/.gem/credentials
-      gem push newrelic-fluentd-output-*.gem
+      gem push nr-fluent-test-*.gem

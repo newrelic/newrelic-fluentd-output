@@ -1,7 +1,7 @@
 trigger:
 - master
 
-# pr: none
+pr: none
 
 pool:
   vmImage: 'ubuntu-latest'
@@ -22,20 +22,20 @@ steps:
     bundle install --retry=3 --jobs=4
   displayName: 'bundle install'
 
-- task: Bash@3
-  displayName: 'Run tests'
-  inputs:
-    targetType: 'inline'
-    script: |
-      bundle exec rake
+# - task: Bash@3
+#   displayName: 'Run tests'
+#   inputs:
+#     targetType: 'inline'
+#     script: |
+#       bundle exec rake
 
-- task: PublishTestResults@2
-  inputs:
-    testResultsFormat: 'JUnit'
-    testResultsFiles: '**/TEST-*.xml'
-    mergeTestResults: true
-    failTaskOnFailedTests: true
-    testRunTitle: 'Publish tests'
+# - task: PublishTestResults@2
+#   inputs:
+#     testResultsFormat: 'JUnit'
+#     testResultsFiles: '**/TEST-*.xml'
+#     mergeTestResults: true
+#     failTaskOnFailedTests: true
+#     testRunTitle: 'Publish tests'
 
 - task: Bash@3
   displayName: 'Build gem'

@@ -1,8 +1,3 @@
-# Ruby
-# Package your Ruby project.
-# Add steps that install rails, analyze code, save build artifacts, deploy, and more:
-# https://docs.microsoft.com/azure/devops/pipelines/languages/ruby
-
 trigger:
 - master
 
@@ -14,18 +9,11 @@ steps:
   inputs:
     versionSpec: '>= 2.5'
 
-# - script: |
-#     curl -L https://toolbelt.treasuredata.com/sh/install-ubuntu-bionic-td-agent3.sh | sh
-#   displayName: 'install fluentd'
-
 - script: |
     gem install bundler
     bundle update
     bundle install --retry=3 --jobs=4
   displayName: 'bundle install'
-
-# - script: bundle exec rake
-#   displayName: 'bundle exec rake'
 
 - task: Bash@3
   displayName: 'Run tests'
@@ -37,5 +25,24 @@ steps:
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit'
-    testResultsFiles: 'test-results.xml'
-    testRunTitle: 'Rspec'
+    testResultsFiles: '**/TEST-*.xml'
+    mergeTestResults: true
+    failTaskOnFailedTests: true
+    testRunTitle: 'Publish tests'
+
+- task: Bash@3
+  displayName: 'Build gem'
+  inputs:
+    targetType: 'inline'
+    script: |
+      gem build newrelic-fluentd-output.gemspec
+
+- task: Bash@3
+  displayName: 'Publish gem to RubyGems'
+  inputs:
+    targetType: 'inline'
+    script: |
+      eval "$(rbenv init -)"
+      mv $(rubyGemsCredentials.secureFilePath) ~/.gem/credentials
+      sudo chmod 600 ~/.gem/credentials
+      gem push newrelic-fluentd-output-*.gem

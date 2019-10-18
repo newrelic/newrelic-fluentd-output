@@ -34,8 +34,15 @@ steps:
     script: |
       bundle exec rake
 
+# - task: PublishTestResults@2
+#   inputs:
+#     testResultsFormat: 'JUnit'
+#     testResultsFiles: 'test-results.xml'
+#     testRunTitle: 'Rspec'
 - task: PublishTestResults@2
   inputs:
     testResultsFormat: 'JUnit'
-    testResultsFiles: 'test-results.xml'
-    testRunTitle: 'Rspec'
+    testResultsFiles: '**/TEST-*.xml'
+    mergeTestResults: true
+    failTaskOnFailedTests: true
+    testRunTitle: 'Publish tests'

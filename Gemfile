@@ -4,5 +4,5 @@ source 'https://rubygems.org'
 gemspec
 
 group :development do
-  gem "rspec"
+  gem "ci_reporter_test_unit"
 end

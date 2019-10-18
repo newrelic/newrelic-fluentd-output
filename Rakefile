@@ -1,9 +1,19 @@
-require "bundler/gem_tasks"
-require "rspec/core/rake_task"
+require "bundler"
+Bundler::GemHelper.install_tasks
 
-RSpec::Core::RakeTask.new(:spec) do |t|
-  t.fail_on_error = false
-#   t.rspec_opts = "--no-drb -r rspec_junit_formatter --format RspecJunitFormatter -o test-results.xml"
+require "rake/testtask"
+require 'ci/reporter/rake/test_unit'
+
+Rake::TestTask.new(:test) do |t|
+  t.libs.push("lib", "test")
+  t.test_files = FileList["test/**/*_test.rb"]
+  t.verbose = true
+  t.warning = true
 end
 
-task :default => :spec
+namespace :ci do
+  task :all => ['ci:setup:testunit', 'test']
+end
+
+task default: ["ci:all"]
+

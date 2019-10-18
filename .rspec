@@ -1,3 +1,0 @@
---format RspecJunitFormatter
---color
--o test-results.xml

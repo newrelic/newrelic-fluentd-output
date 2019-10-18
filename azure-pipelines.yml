@@ -5,6 +5,11 @@ pool:
   vmImage: 'ubuntu-latest'
 
 steps:
+- task: DownloadSecureFile@1
+  name: "rubyGemsCredentials"
+  inputs:
+    secureFile: 'credentials'
+
 - task: UseRubyVersion@0
   inputs:
     versionSpec: '>= 2.5'

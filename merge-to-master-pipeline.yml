@@ -1,6 +1,8 @@
+# Run any time a commit is merged to the 'master' branch
 trigger:
   - master
 
+# There is a separate pipeline for PRs (it does not do deploys)
 pr: none
 
 pool:

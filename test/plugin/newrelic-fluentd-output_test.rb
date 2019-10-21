@@ -40,7 +40,7 @@ class Fluent::Plugin::NewrelicOutputTest < Test::Unit::TestCase
     test "supports multiple workers" do
       driver = create_driver(@simple_config)
 
-      assert_equal(true, ddddriver.instance.multi_workers_ready?)
+      assert_equal(true, driver.instance.multi_workers_ready?)
     end
   end
 

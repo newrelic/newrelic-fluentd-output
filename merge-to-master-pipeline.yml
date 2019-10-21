@@ -1,0 +1,57 @@
+# Run any time a commit is merged to the 'master' branch
+trigger:
+  - master
+
+# There is a separate pipeline for PRs (it does not do deploys)
+pr: none
+
+pool:
+  vmImage: 'ubuntu-latest'
+
+steps:
+  - task: DownloadSecureFile@1
+    name: "rubyGemsCredentials"
+    inputs:
+      secureFile: 'credentials'
+
+  - task: UseRubyVersion@0
+    inputs:
+      versionSpec: '>= 2.5'
+
+  - script: |
+      gem install bundler
+      bundle update
+      bundle install --retry=3 --jobs=4
+    displayName: 'bundle install'
+
+  - task: Bash@3
+    displayName: 'Run tests'
+    inputs:
+      targetType: 'inline'
+      script: |
+        bundle exec rake
+
+  - task: PublishTestResults@2
+    inputs:
+      testResultsFormat: 'JUnit'
+      testResultsFiles: '**/TEST-*.xml'
+      mergeTestResults: true
+      failTaskOnFailedTests: true
+      testRunTitle: 'Publish tests'
+
+  - task: Bash@3
+    displayName: 'Build gem'
+    inputs:
+      targetType: 'inline'
+      script: |
+        gem build newrelic-fluentd-output.gemspec
+
+  - task: Bash@3
+    displayName: 'Publish gem to RubyGems'
+    inputs:
+      targetType: 'inline'
+      script: |
+        eval "$(rbenv init -)"
+        mv $(rubyGemsCredentials.secureFilePath) ~/.gem/credentials
+        sudo chmod 600 ~/.gem/credentials
+        gem push nr-fluent-test-*.gem

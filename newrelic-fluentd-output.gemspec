@@ -4,7 +4,7 @@ $LOAD_PATH.unshift(lib) unless $LOAD_PATH.include?(lib)
 require 'newrelic-fluentd-output/version'
 
 Gem::Specification.new do |spec|
-  spec.name          = "nr-fluent-test"
+  spec.name          = "fluent-plugin-newrelic"
   spec.version       = NewrelicFluentdOutput::VERSION
   spec.authors       = ["New Relic Logging Team"]
   spec.licenses      = ['Apache-2.0']

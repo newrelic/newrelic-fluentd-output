@@ -50,14 +50,14 @@ module Fluent
       def configure(conf)
         super
         if @api_key.nil? && @license_key.nil?
-          raise Fluent::ConfigError.new("'api_key' or `license_key` parameter is required") 
+          raise Fluent::ConfigError.new("'api_key' or 'license_key' parameter is required") 
         end
 
         # create initial sockets hash and socket based on config param
         @end_point = URI.parse(@base_uri)
         auth = {
           @api_key.nil? ? 'X-License-Key' : 'X-Insert-Key' =>
-          @api_key.nil? ? @license_key : @api_key 
+          @api_key.nil? ? @license_key : @api_key
         }
         @header = {
             'X-Event-Source' => 'logs',

@@ -1,10 +1,11 @@
-require 'spec_helper'
+require "helper"
+require 'fluent/plugin/out_newrelic'
 require 'webmock/test_unit'
 require 'zlib'
 require 'newrelic-fluentd-output/version'
 
 class Fluent::Plugin::NewrelicOutputTest < Test::Unit::TestCase
-
+  include Fluent::Test::Helpers
 
   setup do
     Fluent::Test.setup
@@ -47,7 +48,7 @@ class Fluent::Plugin::NewrelicOutputTest < Test::Unit::TestCase
     test "requires api_key or license key" do
       no_api_key_config = ""
 
-      assert_raise Fluent::ConfigError.new("'api_key' or `license_key` parameter is required") do
+      assert_raise Fluent::ConfigError.new("'api_key' or 'license_key' parameter is required") do
         create_driver(no_api_key_config)
       end
     end

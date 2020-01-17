@@ -10,7 +10,11 @@ class Fluent::Plugin::NewrelicOutputTest < Test::Unit::TestCase
   setup do
     Fluent::Test.setup
 
-    @event_time = 12345
+    @event_time_fluent = Fluent::EventTime.new(12345, 678_111_111)  # the 2nd part is in ns, so the 111_111 should be dropped
+    @event_time_fluent_out = 12345678  # the epochtime-ms supposed to be sent to NewRelic API
+    @event_time_integer = 12345678
+    @event_time_integer_out = 12345678
+
     @vortex_success_code = 202
     @vortex_failure_code = 500
     @api_key = "someAccountKey"
@@ -106,17 +110,30 @@ class Fluent::Plugin::NewrelicOutputTest < Test::Unit::TestCase
         message['common']['attributes']['plugin']['version'] == NewrelicFluentdOutput::VERSION }
     end
 
-    test "'timestamp' field is added from event time" do
+    test "'timestamp' field is added from event time (integer case)" do
       stub_request(:any, @base_uri).to_return(status: @vortex_success_code)
 
       driver = create_driver(@simple_config)
       driver.run(default_tag: 'test') do
-        driver.feed(@event_time, {:message => "Test message"})
+        driver.feed(@event_time_integer, {:message => "Test message"})
       end
 
       assert_requested(:post, @base_uri) { |request|
         message = parsed_gzipped_json(request.body)
-        message['logs'][0]['timestamp'] == @event_time }
+        message['logs'][0]['timestamp'] == @event_time_integer_out }
+    end
+
+    test "'timestamp' field is added from event time (Fluent:EventTime case)" do
+      stub_request(:any, @base_uri).to_return(status: @vortex_success_code)
+
+      driver = create_driver(@simple_config)
+      driver.run(default_tag: 'test') do
+        driver.feed(@event_time_fluent, {:message => "Test message"})
+      end
+
+      assert_requested(:post, @base_uri) { |request|
+        message = parsed_gzipped_json(request.body)
+        message['logs'][0]['timestamp'] == @event_time_fluent_out }
     end
 
     test "all other attributes other than message and timestamp are placed in an attributes block" do
@@ -186,15 +203,17 @@ class Fluent::Plugin::NewrelicOutputTest < Test::Unit::TestCase
       driver = create_driver(@simple_config)
       driver.run(default_tag: 'test') do
         driver.feed([
-          [@event_time, {:message => "Test message 1"}],
-          [@event_time, {:message => "Test message 2"}]])
+          [@event_time_integer, {:message => "Test message 1"}],
+          [@event_time_fluent, {:message => "Test message 2"}]])
       end
 
       assert_requested(:post, @base_uri) { |request|
           messages = parsed_gzipped_json(request.body)
           messages['logs'].length == 2 &&
           messages['logs'][0]['message'] == 'Test message 1' &&
-          messages['logs'][1]['message'] == 'Test message 2' }
+          messages['logs'][0]['timestamp'] == @event_time_integer_out &&
+          messages['logs'][1]['message'] == 'Test message 2' &&
+          messages['logs'][1]['timestamp'] == @event_time_fluent_out }
     end
   end
 

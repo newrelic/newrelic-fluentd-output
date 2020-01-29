@@ -94,7 +94,7 @@ module Fluent
         payload = {
           'common' => {
             'attributes' => {
-              'plugin' => {
+              'nr.reportingSource' => {
                 'type' => 'fluentd',
                 'version' => NewrelicFluentdOutput::VERSION,
               }

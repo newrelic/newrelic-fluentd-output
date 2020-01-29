@@ -92,7 +92,7 @@ class Fluent::Plugin::NewrelicOutputTest < Test::Unit::TestCase
 
   sub_test_case "request body" do
 
-    test "message contains plugin information" do
+    test "message contains reporting source" do
       stub_request(:any, @base_uri).to_return(status: @vortex_success_code)
 
       driver = create_driver(@simple_config)
@@ -102,8 +102,8 @@ class Fluent::Plugin::NewrelicOutputTest < Test::Unit::TestCase
 
       assert_requested(:post, @base_uri) { |request|
         message = parsed_gzipped_json(request.body)
-        message['common']['attributes']['plugin']['type'] == 'fluentd' &&
-        message['common']['attributes']['plugin']['version'] == NewrelicFluentdOutput::VERSION }
+        message['common']['attributes']['nr.reportingSource']['type'] == 'fluentd' &&
+        message['common']['attributes']['nr.reportingSource']['version'] == NewrelicFluentdOutput::VERSION }
     end
 
     test "'timestamp' field is added from event time" do

@@ -6,7 +6,7 @@
 * Install dependencies: `bundle install`
 * Write tests and production code!
 * Bump version: edit version file `version.rb`
-* Run tests: `bundle exec rspec`
+* Run tests: `bundle exec rake`
 * Build the gem: `gem build newrelic-fluentd-output.gemspec`
 
 **NOTE**: Be mindful that if you are using 'match **', that using `log.info` in the plugin can cause an unintended 
@@ -27,16 +27,21 @@ instead of `<match **>`), so that your output plugin does not also pick up thing
   @type tail
   format none
   path /usr/local/var/log/test.log
+  pos_file /usr/local/var/log/test.log.pos
   tag test
 </source>
 
 <match test>
   @type newrelic
   api_key (your-api-key)
+  <buffer>
+    flush_mode interval
+    flush_interval 5s
+  </buffer>
 </match>
 ```
 
-### Testing plugin
+### Testing the plugin
 * Stop Fluentd: `sudo launchctl unload /Library/LaunchDaemons/td-agent.plist`
 * Remove previous version: `sudo /opt/td-agent/usr/sbin/td-agent-gem uninstall fluent-plugin-newrelic`
 * Add new version: `sudo /opt/td-agent/usr/sbin/td-agent-gem install fluent-plugin-newrelic-<version>.gem`

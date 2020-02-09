@@ -6,7 +6,7 @@ Using [Fluentd](https://www.fluentd.org/) as an image makes it simple to deploy 
 
 If you are able to use the Fluentd image directly, it is really simple build on that image and add the New Relic Fluetd Output Plugin. The below set of steps assumes you have some basic understanding of building a Docker image.
 
-### Steps
+### Docker Image: Steps
 
 #### 1. Create a `Dockerfile`
 
@@ -46,3 +46,79 @@ In the following example can be used if you are going to run a syslog server on 
 # In testing, it appeared that trying to map the UDP port to from a different one configured in the Fluentd config file didn't work as expected
 docker run -d --name "syslog" -p 0.0.0.0:5140:5140/udp -p 0.0.0.0:5142:5142/udp -v /etc/fluentd:/fluentd/etc -e FLUENTD_CONF=fluentd.conf nr-fluent:latest
 ```
+
+## Configuring a Syslog Server with Fluentd and New Relic Logs
+
+In the below example, we are going to create a `fluentd.conf` which will enable a syslog server. It is a good idea to determine if your syslog server is going
+to connect to this service using UDP or TCP. By default, most syslog servers will likely use UDP. In the below example, I am setting up two syslog listeners for
+Ubiquiti [Edgemax router](https://help.ubnt.com/hc/en-us/articles/204975904-EdgeRouter-Remote-Syslog-Server-for-System-Logs) and the [Unifi Security Gateway and Access points](https://community.ui.com/questions/syslog-server-and-unifi-logs/bbde4318-e73f-4efe-b1b9-ae11319cc1d9).
+
+### Fluentd.Conf: Steps
+
+#### 1. Create a `fluentd.conf` file in a known directory on the host machine
+
+Below, I have chosen `/etc/fluentd/` as my directory.
+
+```bash
+# Make the directory
+sudo mkdir /etc/fluentd
+
+# Edit the file
+sudo nano /etc/fluentd/fluentd.conf
+```
+
+#### 2. Add the following to the `fluentd.conf and save the file
+
+```xml
+# UNIFI
+<source>
+  @type syslog
+  port 5140
+  bind 0.0.0.0
+  tag unifi
+</source>
+
+<filter unifi.**>
+  @type record_transformer
+  renew_record true
+  enable_ruby true
+  <record>
+    timestamp ${time.to_f}
+    hostname ${record["host"][/(^.*?),/, 1]}
+    service ${tag_prefix[1]}
+    log_level ${tag_suffix[2]}
+    message ${record.to_json}
+  </record>
+</filter>
+
+# EDGE MAX
+<source>
+  @type syslog
+  port 5142
+  bind 0.0.0.0
+  tag edge-max
+</source>
+
+<filter edge-max.**>
+  @type record_transformer
+  renew_record true
+  enable_ruby true
+  <record>
+    timestamp ${time.to_f}
+    hostname ${record["host"]}
+    service ${tag_prefix[1]}
+    log_level ${tag_suffix[2]}
+    message ${record.to_json}
+  </record>
+</filter>
+
+# Send data
+<match **>
+  @type newrelic
+  api_key <CHANGE TO YOUR LICENSE KEY HERE>
+</match>
+```
+
+#### 3. Check New Relic for New Logs
+
+That is all it should take to get a new stream of logs coming from those devices.

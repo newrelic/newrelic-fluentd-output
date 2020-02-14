@@ -12,13 +12,7 @@ If you are able to use the Fluentd image directly, it is really simple build on 
 
 It doesn't take much to get the New Relic Output Plugin into a docker image. Here is a good example from Docker on how best to create an image, [LINK](https://docs.docker.com/develop/develop-images/dockerfile_best-practices/).
 
-```yaml
-FROM fluent/fluentd:v1.9.1-1.0
-
-USER root
-
-RUN fluent-gem install fluent-plugin-newrelic
-```
+We have an [example Docker file](Dockerfile) in this folder which can be used to get moving quickly.
 
 #### 2. Build the Image
 
@@ -67,57 +61,10 @@ sudo mkdir /etc/fluentd
 sudo nano /etc/fluentd/fluentd.conf
 ```
 
-#### 2. Add the following to the `fluentd.conf and save the file
+#### 2. Add the contents from the [`syslog\fluentd.conf`](syslog\fluentd.config)
 
-```xml
-# UNIFI
-<source>
-  @type syslog
-  port 5140
-  bind 0.0.0.0
-  tag unifi
-</source>
-
-<filter unifi.**>
-  @type record_transformer
-  renew_record true
-  enable_ruby true
-  <record>
-    timestamp ${time.to_f}
-    hostname ${record["host"][/(^.*?),/, 1]}
-    service ${tag_prefix[1]}
-    log_level ${tag_suffix[2]}
-    message ${record.to_json}
-  </record>
-</filter>
-
-# EDGE MAX
-<source>
-  @type syslog
-  port 5142
-  bind 0.0.0.0
-  tag edge-max
-</source>
-
-<filter edge-max.**>
-  @type record_transformer
-  renew_record true
-  enable_ruby true
-  <record>
-    timestamp ${time.to_f}
-    hostname ${record["host"]}
-    service ${tag_prefix[1]}
-    log_level ${tag_suffix[2]}
-    message ${record.to_json}
-  </record>
-</filter>
-
-# Send data
-<match **>
-  @type newrelic
-  api_key <CHANGE TO YOUR LICENSE KEY HERE>
-</match>
-```
+You can find the contents of the [`syslog\fluentd.conf`](syslog\fluentd.config) in the sub folder `syslog`. These contents should provide a quick start to getting started. In the provided
+example, the syslog details are coming from the above mentioned devices. You may need to tweak the configuration according to the server sending the syslog traffic.
 
 #### 3. Check New Relic for New Logs
 

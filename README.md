@@ -4,11 +4,17 @@ A [Fluentd](https://fluentd.org/) output plugin that sends logs to New Relic
 
 This project is provided AS-IS WITHOUT WARRANTY OR SUPPORT, although you can report issues and contribute to the project here on GitHub.
 
+## Examples
+
+Please see the [examples](examples/) directory for ways to build a Docker image with the New Relic output plugin and other configuration types
+that could be useful in your environment.
+
 ## Prerequisites
 
 Fluentd >= v1.0
 
 ## Installation
+
 Add the plugin to your fluentd agent:
 
 `fluent-gem install fluent-plugin-newrelic`
@@ -53,6 +59,7 @@ Add one of the following blocks to your Fluentd config file (with your specific 
 #### Using Insights Inserts Key
 
 Example using Insights Insert key:
+
 ```rb
 <match **>
   @type newrelic
@@ -64,7 +71,9 @@ Getting your New Relic Insights Insert key:
 `https://insights.newrelic.com/accounts/<ACCOUNT_ID>/manage/api_keys`
 
 #### Using License Key
+
 Example using License key:
+
 ```rb
 <match **>
   @type newrelic

@@ -67,6 +67,9 @@ module Fluent
       end
 
       def package_record(record, timestamp)
+        if defined? timestamp.nsec
+          timestamp = timestamp * 1000 + timestamp.nsec / 1_000_000
+        end
         packaged = {
           'timestamp' => timestamp,
           # non-intrinsic attributes get put into 'attributes'

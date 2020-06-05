@@ -61,9 +61,9 @@ sudo mkdir /etc/fluentd
 sudo nano /etc/fluentd/fluentd.conf
 ```
 
-#### 2. Add the contents from the [`syslog\fluentd.conf`](syslog\fluentd.config)
+#### 2. Add the contents from the [`syslog/fluentd.conf`](syslog/fluentd.config)
 
-You can find the contents of the [`syslog\fluentd.conf`](syslog\fluentd.config) in the sub folder `syslog`. These contents should provide a quick start to getting started. In the provided
+You can find the contents of the [`syslog/fluentd.conf`](syslog/fluentd.config) in the sub folder `syslog`. These contents should provide a quick start to getting started. In the provided
 example, the syslog details are coming from the above mentioned devices. You may need to tweak the configuration according to the server sending the syslog traffic.
 
 #### 3. Check New Relic for New Logs

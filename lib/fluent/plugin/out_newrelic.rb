@@ -33,6 +33,7 @@ module Fluent
       config_param :license_key, :string, :default => nil
 
       DEFAULT_BUFFER_TYPE = 'memory'.freeze
+      MAX_PAYLOAD_SIZE = 1048576 # 1 Megabyte in bytes
 
       config_section :buffer do
         config_set_default :@type, DEFAULT_BUFFER_TYPE
@@ -50,7 +51,7 @@ module Fluent
       def configure(conf)
         super
         if @api_key.nil? && @license_key.nil?
-          raise Fluent::ConfigError.new("'api_key' or 'license_key' parameter is required") 
+          raise Fluent::ConfigError.new("'api_key' or 'license_key' parameter is required")
         end
 
         # create initial sockets hash and socket based on config param
@@ -89,39 +90,23 @@ module Fluent
           packaged['message'] = record['log']
           packaged['attributes'].delete('log')
         end
-        
+
         packaged
       end
 
       def write(chunk)
-        payload = {
-          'common' => {
-            'attributes' => {
-              'plugin' => {
-                'type' => 'fluentd',
-                'version' => NewrelicFluentdOutput::VERSION,
-              }
-            }
-          },
-          'logs' => []
-        }
+        logs = []
         chunk.msgpack_each do |ts, record|
           next unless record.is_a? Hash
           next if record.empty?
-          payload['logs'].push(package_record(record, ts))
+          logs.push(package_record(record, ts))
         end
-        io = StringIO.new
-        gzip = Zlib::GzipWriter.new(io)
 
-        # Fluentd can run with a version of Ruby (2.1.0) whose to_json method doesn't support non-ASCII characters.
-        # So we use Yajl, which can handle all Unicode characters. Apparently this library is what Fluentd uses
-        # internally, so it is installed by default with td-agent.
-        # See https://github.com/fluent/fluentd/issues/215
-        gzip << Yajl.dump([payload])
-        gzip.close
-        send_payload(io.string)
+
+        payloads = get_compressed_payloads(logs)
+        payloads.each { |payload| send_payload(payload) }
       end
-      
+
       def handle_response(response)
         if !(200 <= response.code.to_i && response.code.to_i < 300)
           log.error("Response was " + response.code + " " + response.body)
@@ -137,6 +122,56 @@ module Fluent
         handle_response(http.request(request))
       end
 
+      private
+
+      def get_compressed_payloads(logs)
+        return [] if logs.length == 0
+
+        payload = create_payload(logs)
+        compressed_payload = compress(payload)
+
+        if compressed_payload.bytesize < MAX_PAYLOAD_SIZE
+          return [compressed_payload]
+        end
+
+        if logs.length > 1 # we can split
+          # let's split logs array by half, and try to create payloads again
+          midpoint = logs.length / 2
+          first_half = get_compressed_payloads(logs.slice(0, midpoint))
+          second_half = get_compressed_payloads(logs.slice(midpoint, logs.length))
+          return first_half + second_half
+        else
+          log.error("Can't compress record below required maximum packet size and it will be discarded. Record: #{logs[0]}")
+          return []
+        end
+      end
+
+      def create_payload(logs)
+        {
+          'common' => {
+            'attributes' => {
+              'plugin' => {
+                'type' => 'fluentd',
+                'version' => NewrelicFluentdOutput::VERSION,
+              }
+            }
+          },
+          'logs' => logs
+        }
+      end
+
+      def compress(payload)
+        io = StringIO.new
+        gzip = Zlib::GzipWriter.new(io)
+
+        # Fluentd can run with a version of Ruby (2.1.0) whose to_json method doesn't support non-ASCII characters.
+        # So we use Yajl, which can handle all Unicode characters. Apparently this library is what Fluentd uses
+        # internally, so it is installed by default with td-agent.
+        # See https://github.com/fluent/fluentd/issues/215
+        gzip << Yajl.dump([payload])
+        gzip.close
+        io.string
+      end
     end
   end
 end

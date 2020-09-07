@@ -129,9 +129,19 @@ class Fluent::Plugin::NewrelicOutputTest < Test::Unit::TestCase
         chunk = MockChunk.new([123,124,125,126,127], data)
 
         driver.write(chunk)
-
         actual = driver.instance_variable_get(:@send_payload_called_with)
         assert(actual.length == 2)
+        actual_logs_timestamps = []
+        actual.each{ |body|
+          logs = parsed_gzipped_json(body)["logs"]
+          logs.each{ |log| actual_logs_timestamps.push(log["timestamp"])}
+        }
+        assert(actual_logs_timestamps.length == 4)
+        assert(actual_logs_timestamps.include? 123)
+        assert(actual_logs_timestamps.include? 125)
+        assert(actual_logs_timestamps.include? 126)
+        assert(actual_logs_timestamps.include? 127)
+
       end
 
       test "no log lines" do

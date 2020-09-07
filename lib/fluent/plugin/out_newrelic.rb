@@ -130,7 +130,7 @@ module Fluent
         payload = create_payload(logs)
         compressed_payload = compress(payload)
 
-        if compressed_payload.bytesize < MAX_PAYLOAD_SIZE
+        if compressed_payload.bytesize <= MAX_PAYLOAD_SIZE
           return [compressed_payload]
         end
 

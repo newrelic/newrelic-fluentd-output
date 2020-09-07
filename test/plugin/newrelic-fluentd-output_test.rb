@@ -3,6 +3,8 @@ require 'fluent/plugin/out_newrelic'
 require 'webmock/test_unit'
 require 'zlib'
 require 'newrelic-fluentd-output/version'
+require 'fluent/plugin/buffer/memory_chunk'
+require 'fluent/event'
 
 class Fluent::Plugin::NewrelicOutputTest < Test::Unit::TestCase
   include Fluent::Test::Helpers
@@ -45,6 +47,112 @@ class Fluent::Plugin::NewrelicOutputTest < Test::Unit::TestCase
       driver = create_driver(@simple_config)
 
       assert_equal(true, driver.instance.multi_workers_ready?)
+    end
+
+    class MockChunk
+      def initialize(times, records)
+        @times = times
+        @records = records
+      end
+
+      def msgpack_each(&block)
+        @times.length.times do |i|
+          block.call(@times[i], @records[i])
+        end
+      end
+    end
+
+    def create_driver_with_mocked_send_payload
+      driver = Fluent::Plugin::NewrelicOutput.new()
+
+      def driver.send_payload(payload)
+        @send_payload_called_with ||= []
+        @send_payload_called_with << payload
+      end
+
+      driver
+    end
+
+    sub_test_case "write()" do
+      test "one log line" do
+        driver = create_driver_with_mocked_send_payload
+        chunk = MockChunk.new([123],[{ "hello" => "world"}])
+
+        driver.write(chunk)
+
+        actual = driver.instance_variable_get(:@send_payload_called_with)
+        assert(actual.length == 1)
+        # There is something non-deterministic about the packaging of the
+        # message. We can't test for exact length or content
+        assert(actual[0].length > 100)
+      end
+
+      def big_strings
+        @big_strings ||= 20.times.map { |_| rand(36**100000).to_s(36) }
+      end
+
+      test "one log line that passes the max size" do
+        driver = create_driver_with_mocked_send_payload
+        chunk = MockChunk.new([123],[{ "hello" => big_strings.join }])
+
+        driver.write(chunk)
+
+        actual = driver.instance_variable_get(:@send_payload_called_with)
+        assert(actual.nil?)
+      end
+
+      test "two log lines split into two payloads" do
+        # 2 log lines, together too big, but separately not
+        driver = create_driver_with_mocked_send_payload
+        data = [
+          {"first" => big_strings[0, 10]},
+          {"second" => big_strings[10, 20]}
+        ]
+        chunk = MockChunk.new([123, 124], data)
+
+        driver.write(chunk)
+
+        actual = driver.instance_variable_get(:@send_payload_called_with)
+        assert(actual.length == 2)
+      end
+
+      test "5 log lines, one dropped" do
+        # 5 log lines, one is huge
+        driver = create_driver_with_mocked_send_payload
+        data = [
+          {"first" => "hello"},
+          {"second" => big_strings.join },
+          {"third" => "hello again"},
+          {"fourth" => "hello hello"},
+          {"fifth" => "bye now"}
+        ]
+        chunk = MockChunk.new([123,124,125,126,127], data)
+
+        driver.write(chunk)
+        actual = driver.instance_variable_get(:@send_payload_called_with)
+        assert(actual.length == 2)
+        actual_logs_timestamps = []
+        actual.each{ |body|
+          logs = parsed_gzipped_json(body)["logs"]
+          logs.each{ |log| actual_logs_timestamps.push(log["timestamp"])}
+        }
+        assert(actual_logs_timestamps.length == 4)
+        assert(actual_logs_timestamps.include? 123)
+        assert(actual_logs_timestamps.include? 125)
+        assert(actual_logs_timestamps.include? 126)
+        assert(actual_logs_timestamps.include? 127)
+
+      end
+
+      test "no log lines" do
+        driver = create_driver_with_mocked_send_payload
+        chunk = MockChunk.new([], [])
+
+        driver.write(chunk)
+
+        actual = driver.instance_variable_get(:@send_payload_called_with)
+        assert(actual.nil?)
+      end
     end
   end
 

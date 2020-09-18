@@ -134,6 +134,8 @@ module Fluent
           return [compressed_payload]
         end
 
+        compressed_payload = nil # Free for GC
+
         if logs.length > 1 # we can split
           # let's split logs array by half, and try to create payloads again
           midpoint = logs.length / 2

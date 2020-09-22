@@ -33,7 +33,7 @@ module Fluent
       config_param :license_key, :string, :default => nil
 
       DEFAULT_BUFFER_TYPE = 'memory'.freeze
-      MAX_PAYLOAD_SIZE = 1048576 # 1 Megabyte in bytes
+      MAX_PAYLOAD_SIZE = 1000000 # bytes
 
       config_section :buffer do
         config_set_default :@type, DEFAULT_BUFFER_TYPE

@@ -1,0 +1,28 @@
+name: New Relic Fluentd Output Plugin - Pull Request
+
+on: [pull_request]
+
+jobs:
+  ci:
+    name: Continuous Integration pipeline
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup JRuby, bundler and install dependencies
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby-2.5.8
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+
+      - name: Run unit tests
+        run: bundle exec rake
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1.5
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          files: '**/TEST-*.xml'

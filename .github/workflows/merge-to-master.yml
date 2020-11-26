@@ -1,10 +1,14 @@
-name: New Relic Fluentd Output Plugin - Pull Request
+name: New Relic Fluentd Output Plugin - Merge to master
 
 on: [pull_request]
+#on:
+#  push:
+#    branches:
+#      - master
 
 jobs:
   ci:
-    name: Continuous Integration pipeline
+    name: Continuous Delivery pipeline
     runs-on: ubuntu-18.04
 
     steps:
@@ -26,3 +30,8 @@ jobs:
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           files: '**/TEST-*.xml'
+
+      - name: Build gem
+        run: gem build newrelic-fluentd-output.gemspec
+
+      # TODO publish Gem to Rubygems

@@ -34,4 +34,8 @@ jobs:
       - name: Build gem
         run: gem build newrelic-fluentd-output.gemspec
 
-      # TODO publish Gem to Rubygems
+      - name: Publish newrelic_rpm to rubygems.org
+        env:
+          GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
+        run: |
+          gem push fluent-plugin-newrelic-*.gem

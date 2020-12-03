@@ -38,4 +38,4 @@ jobs:
         #env:
         #  GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
         run: |
-          GEM_HOST_API_KEY=1234 gem push fluent-plugin-newrelic-*.gem
+          gem push fluent-plugin-newrelic-*.gem

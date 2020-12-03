@@ -1,0 +1,40 @@
+name: New Relic Fluentd Output Plugin - Merge to master
+
+on:
+  push:
+    branches:
+      - master
+
+jobs:
+  ci:
+    name: Continuous Delivery pipeline
+    runs-on: ubuntu-18.04
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Setup Ruby, bundler and install dependencies
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ruby-2.7.2
+          bundler-cache: true # runs 'bundle install' and caches installed gems automatically
+
+      - name: Run unit tests
+        run: bundle exec rake
+
+      - name: Publish Unit Test Results
+        uses: EnricoMi/publish-unit-test-result-action@v1.5
+        if: always()
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          files: '**/TEST-*.xml'
+
+      - name: Build gem
+        run: gem build newrelic-fluentd-output.gemspec
+
+      - name: Publish fluent-plugin-newrelic to rubygems.org
+        env:
+          GEM_HOST_API_KEY: ${{ secrets.GEM_HOST_API_KEY }}
+        run: |
+          gem push fluent-plugin-newrelic-*.gem

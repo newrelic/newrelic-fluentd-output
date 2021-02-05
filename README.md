@@ -38,6 +38,8 @@ Exactly one of the following:
 | api_key | your New Relic API Insert key |
 | license_key | your New Relic License key |
 
+If neither is specified, then it will use the NEW_RELIC_LICENSE_KEY environment variable, if set.
+
 ### Optional plugin configuration
 
 | Property | Description | Default value |

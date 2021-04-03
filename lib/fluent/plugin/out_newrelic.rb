@@ -51,6 +51,7 @@ module Fluent
       def configure(conf)
         super
 
+        @api_key ||= ENV["NEW_RELIC_API_KEY"]
         @license_key ||= ENV["NEW_RELIC_LICENSE_KEY"]
         if @api_key.nil? && @license_key.nil?
           raise Fluent::ConfigError.new("'api_key' or 'license_key' parameter is required")

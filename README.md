@@ -31,14 +31,12 @@ For more info, review [Fluentd's official documentation](https://docs.fluentd.or
 
 ### Required plugin configuration
 
-Exactly one of the following:
+This plugin must be configured with either a New Relic API Insert key, or a New Relic License key.
+If both types of keys are specified, the API Insert key will take precedence.
 
-| Property | Description |
-|---|---|
-| api_key | your New Relic API Insert key |
-| license_key | your New Relic License key |
+To specify an API Insert key, either set the `api_key` property in the configuration, or set the `NEW_RELIC_API_KEY` environment variable. If both are specified, the configuration property will take precedence.
 
-If neither is specified, then it will use the NEW_RELIC_LICENSE_KEY environment variable, if set.
+To specify a license key, either set the `license_key` property in the configuration, or set the `NEW_RELIC_LICENSE_KEY` environment variable. If both are specified, the configuration property will take precedence.
 
 ### Optional plugin configuration
 

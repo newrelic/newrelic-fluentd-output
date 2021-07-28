@@ -1,0 +1,12 @@
+version: "3.0"
+
+services:
+  fluentd:
+    env_file: .env
+    build:
+      dockerfile: ./Dockerfile
+      context: .
+    volumes:
+      - "./config:/fluentd/etc"
+      - "./testlogs/:/testlogs/:rw"
+    command: fluentd -c /fluentd/etc/fluent.conf -v

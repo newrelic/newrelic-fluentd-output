@@ -86,6 +86,12 @@ Example using License key:
 Getting your New Relic license key:
 `https://rpm.newrelic.com/accounts/<ACCOUNT_ID>`
 
+## Playground
+
+To provide a sandbox environment where you can play with the plugin while development or testing
+we've added a docker-compose environment that would help to run fluend with the plugin and send
+some logs. [More info](playground/README.md)
+
 ## Community
 
 New Relic hosts and moderates an online forum where customers can interact with New Relic employees as well as other customers to get help and share best practices. Like all official New Relic open source projects, there's a related Community topic in the New Relic Explorers Hub: [Log forwarding](https://discuss.newrelic.com/tag/log-forwarding)
@@ -100,6 +106,7 @@ If you believe you have found a security vulnerability in this project or any of
 If you would like to contribute to this project, **please create a branch directly in this repository** and review [these guidelines](https://opensource.newrelic.com/code-of-conduct/). 
 
 ## License
+
 newrelic-fluentd-output is licensed under the [Apache 2.0](http://apache.org/licenses/LICENSE-2.0.txt) License.
 
 

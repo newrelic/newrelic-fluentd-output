@@ -19,6 +19,12 @@ This command should write a line on the log file and it will reach new relic in 
 
 `echo "Hello world" >> ./testlogs/test.log`
 
+If what you need is send logs every .05s, for example, you can have a big file like
+[1mb of text](https://gist.github.com/khaykov/a6105154becce4c0530da38e723c2330) and
+use some awk magic to send each line with .05s delay.
+
+`awk '{print $0; system("sleep .05");}' 1mbofdata.txt >> ./testlogs/test.log`
+
 ## Troubleshooting
 
 If you need to go inside the container to debug something just run `docker-compose exec fluentd sh`

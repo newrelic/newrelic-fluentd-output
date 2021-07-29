@@ -1,29 +1,36 @@
 ---
 name: Bug report
-about: Create a report to help us improve
-title: '[BUG]'
+about: Report a bug so we can take care of it
+title: ''
 labels: bug
 assignees: ''
 ---
 
-**Describe the bug**
+[NOTE]: # ( ^^ Provide a general summary of the issue in the title above ^^ )
 
-A clear and concise description of what the bug is.
+## Description
 
-**To Reproduce**
+[NOTE]: # ( Describe the problem you're encountering )
+[TIP]:  # ( Do NOT share sensitive information, whether personal, proprietary, or otherwise! )
 
-Steps to reproduce the behavior
+## Expected Behavior
 
-**Expected behavior**
+[NOTE]: # ( Tell us what you expected to happen )
 
-A clear and concise description of what you expected to happen.
+## [Troubleshooting](https://discuss.newrelic.com/t/troubleshooting-frameworks/108787) or [NR Diag](https://docs.newrelic.com/docs/using-new-relic/cross-product-functions/troubleshooting/new-relic-diagnostics) results
 
-**Add any information you think could help to review and fix the problem**
+[NOTE]: # ( Provide any other relevant log data )
+[TIP]:  # ( Scrub logs and diagnostic information for sensitive information )
 
-- OS / Distribution
-- Versions of the artifact
+## Steps to Reproduce
 
-**Additional context**
+[NOTE]: # ( Please be as specific as possible )
+[TIP]:  # ( Link a sample application that demonstrates the issue )
 
-Logs, screenshots... whatever you think that could help to understand the problem.
+## Your Environment
 
+[TIP]:  # ( Include as many relevant details about your environment as possible including the running version of New Relic software and any relevant configurations. )
+
+## Additional context
+
+[TIP]:  # ( Add any other context about the problem here. For example, relevant community posts, support tickets, screenshots... )

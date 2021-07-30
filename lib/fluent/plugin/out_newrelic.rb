@@ -33,11 +33,15 @@ module Fluent
       config_param :license_key, :string, :default => nil
 
       DEFAULT_BUFFER_TYPE = 'memory'.freeze
+      DEFAULT_TIMEKEY = 5
+      DEFAULT_TIMEKEY_WAIT = 0
       MAX_PAYLOAD_SIZE = 1000000 # bytes
 
       config_section :buffer do
         config_set_default :@type, DEFAULT_BUFFER_TYPE
-        config_set_default :chunk_keys, ['timestamp']
+        config_set_default :chunk_keys, ['time']
+        config_set_default :timekey, DEFAULT_TIMEKEY
+        config_set_default :timekey_wait, DEFAULT_TIMEKEY_WAIT
       end
 
       define_method('log') {$log} unless method_defined?(:log)

@@ -311,7 +311,7 @@ class Fluent::Plugin::NewrelicOutputTest < Test::Unit::TestCase
       driver = create_driver(@simple_config)
       driver.run(default_tag: 'test') do
         driver.feed([
-          [@event_time_integer, {:message => "Test message 1"}],
+          [@event_time_fluent, {:message => "Test message 1"}],
           [@event_time_fluent, {:message => "Test message 2"}]])
       end
 
@@ -319,7 +319,7 @@ class Fluent::Plugin::NewrelicOutputTest < Test::Unit::TestCase
           messages = parsed_gzipped_json(request.body)
           messages['logs'].length == 2 &&
           messages['logs'][0]['message'] == 'Test message 1' &&
-          messages['logs'][0]['timestamp'] == @event_time_integer_out &&
+          messages['logs'][0]['timestamp'] == @event_time_fluent_out &&
           messages['logs'][1]['message'] == 'Test message 2' &&
           messages['logs'][1]['timestamp'] == @event_time_fluent_out }
     end

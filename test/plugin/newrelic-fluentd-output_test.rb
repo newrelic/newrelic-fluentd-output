@@ -231,7 +231,7 @@ class Fluent::Plugin::NewrelicOutputTest < Test::Unit::TestCase
         message['logs'][0]['timestamp'] == @event_time_integer_out }
     end
 
-    test "fluent's event time is used if record has no timestamp (Fluent:EventTime case)" do
+    test "fluentd's event time is used if record has no timestamp (Fluent:EventTime case)" do
       stub_request(:any, @base_uri).to_return(status: @vortex_success_code)
 
       driver = create_driver(@simple_config)

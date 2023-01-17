@@ -76,11 +76,10 @@ module Fluent
 
       def package_record(record, timestamp)
         packaged = {
+          'timestamp' => resolveTimestamp(record['timestamp'], timestamp),
           # non-intrinsic attributes get put into 'attributes'
           'attributes' => record
         }
-
-        packaged['timestamp'] = resolveTimestamp(record['timestamp'], timestamp)
 
         # intrinsic attributes go at the top level
         if record.has_key?('message')

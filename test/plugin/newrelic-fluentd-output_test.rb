@@ -231,7 +231,7 @@ class Fluent::Plugin::NewrelicOutputTest < Test::Unit::TestCase
         message['logs'][0]['timestamp'] == @event_time_integer_out }
     end
 
-    test "'timestamp' field is added from event time (Fluent:EventTime case)" do
+    test "fluentd's event time is used if record has no timestamp (Fluent:EventTime case)" do
       stub_request(:any, @base_uri).to_return(status: @vortex_success_code)
 
       driver = create_driver(@simple_config)
@@ -242,6 +242,20 @@ class Fluent::Plugin::NewrelicOutputTest < Test::Unit::TestCase
       assert_requested(:post, @base_uri) { |request|
         message = parsed_gzipped_json(request.body)
         message['logs'][0]['timestamp'] == @event_time_fluent_out }
+    end
+
+    test "'timestamp' field from record log has preference over fluentd's event time (Fluent:EventTime case)" do
+      stub_request(:any, @base_uri).to_return(status: @vortex_success_code)
+
+      driver = create_driver(@simple_config)
+      record_timestamp = 654321
+      driver.run(default_tag: 'test') do
+        driver.feed(@event_time_fluent, {:message => "Test message", :timestamp => record_timestamp})
+      end
+
+      assert_requested(:post, @base_uri) { |request|
+        message = parsed_gzipped_json(request.body)
+        message['logs'][0]['timestamp'] == record_timestamp }
     end
 
     test "all other attributes other than message and timestamp are placed in an attributes block" do

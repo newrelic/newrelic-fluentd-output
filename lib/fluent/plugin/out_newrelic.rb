@@ -75,11 +75,8 @@ module Fluent
       end
 
       def package_record(record, timestamp)
-        if defined? timestamp.nsec
-          timestamp = timestamp * 1000 + timestamp.nsec / 1_000_000
-        end
         packaged = {
-          'timestamp' => timestamp,
+          'timestamp' => resolveTimestamp(record['timestamp'], timestamp),
           # non-intrinsic attributes get put into 'attributes'
           'attributes' => record
         }
@@ -180,6 +177,17 @@ module Fluent
         gzip << Yajl.dump([payload])
         gzip.close
         io.string
+      end
+
+      def resolveTimestamp(recordTimestamp, fluentdTimestamp)
+        if recordTimestamp
+          recordTimestamp
+        else
+          if defined? fluentdTimestamp.nsec
+            fluentdTimestamp = fluentdTimestamp * 1000 + fluentdTimestamp.nsec / 1_000_000
+          end
+          fluentdTimestamp
+        end
       end
     end
   end

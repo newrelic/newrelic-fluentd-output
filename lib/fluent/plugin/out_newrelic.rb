@@ -147,7 +147,7 @@ module Fluent
           second_half = get_compressed_payloads(logs.slice(midpoint, logs.length))
           return first_half + second_half
         else
-          log.error("Can't compress record below required maximum packet size and it will be discarded. Record: #{logs[0]}")
+          log.error("Can't compress record below required maximum packet size and it will be discarded.")
           return []
         end
       end

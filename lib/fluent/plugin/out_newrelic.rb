@@ -138,6 +138,7 @@ module Fluent
           return [compressed_payload]
         end
 
+        compressed_payload_bytesize = compressed_payload.bytesize
         compressed_payload = nil # Free for GC
 
         if logs.length > 1 # we can split
@@ -147,7 +148,8 @@ module Fluent
           second_half = get_compressed_payloads(logs.slice(midpoint, logs.length))
           return first_half + second_half
         else
-          log.error("Can't compress record below required maximum packet size and it will be discarded.")
+          log.error("Can't compress record below required maximum packet size and it will be discarded. " +
+                      "Record timestamp: #{logs[0]['timestamp']}. Compressed size: #{compressed_payload_bytesize} bytes. Uncompressed size: #{payload.to_json.bytesize} bytes.")
           return []
         end
       end

@@ -18,7 +18,7 @@ require 'net/http'
 require 'uri'
 require 'zlib'
 require 'newrelic-fluentd-output/version'
-require 'yajl'
+require 'json'
 
 module Fluent
   module Plugin
@@ -149,7 +149,7 @@ module Fluent
           return first_half + second_half
         else
           log.error("Can't compress record below required maximum packet size and it will be discarded. " +
-                      "Record timestamp: #{logs[0]['timestamp']}. Compressed size: #{compressed_payload_bytesize} bytes. Uncompressed size: #{payload.to_json.bytesize} bytes.")
+                      "Record timestamp: #{logs[0]['timestamp']}. Compressed size: #{compressed_payload_bytesize} bytes. Uncompressed size: #{sanitized_json(payload).bytesize} bytes.")
           return []
         end
       end
@@ -171,14 +171,41 @@ module Fluent
       def compress(payload)
         io = StringIO.new
         gzip = Zlib::GzipWriter.new(io)
-
-        # Fluentd can run with a version of Ruby (2.1.0) whose to_json method doesn't support non-ASCII characters.
-        # So we use Yajl, which can handle all Unicode characters. Apparently this library is what Fluentd uses
-        # internally, so it is installed by default with td-agent.
-        # See https://github.com/fluent/fluentd/issues/215
-        gzip << Yajl.dump([payload])
+        gzip << sanitized_json([payload])
         gzip.close
         io.string
+      end
+
+      # Unlike Yajl, which passed invalid UTF-8 byte sequences through, the json gem
+      # raises an error for them. Sanitize the payload and retry rather than losing
+      # the whole chunk because of a single bad record.
+      # See https://github.com/fluent/fluentd/issues/215
+      def sanitized_json(payload)
+        JSON.generate(payload)
+      rescue JSON::GeneratorError, EncodingError
+        JSON.generate(scrub_invalid_utf8(payload))
+      end
+
+      def scrub_invalid_utf8(value)
+        case value
+        when String
+          if value.encoding == Encoding::UTF_8
+            value.valid_encoding? ? value : value.scrub('?')
+          elsif value.encoding == Encoding::ASCII_8BIT
+            # Treat binary as UTF-8 bytes: encode() would replace every byte >= 0x80,
+            # while scrubbing preserves any valid UTF-8 sequences in the string.
+            s = value.dup.force_encoding(Encoding::UTF_8)
+            s.valid_encoding? ? s : s.scrub!('?')
+          else
+            value.encode(Encoding::UTF_8, invalid: :replace, undef: :replace, replace: '?')
+          end
+        when Hash
+          value.each_with_object({}) { |(k, v), h| h[scrub_invalid_utf8(k)] = scrub_invalid_utf8(v) }
+        when Array
+          value.map { |v| scrub_invalid_utf8(v) }
+        else
+          value
+        end
       end
 
       def resolveTimestamp(recordTimestamp, fluentdTimestamp)

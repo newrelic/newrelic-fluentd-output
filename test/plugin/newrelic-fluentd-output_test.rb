@@ -285,6 +285,34 @@ class Fluent::Plugin::NewrelicOutputTest < Test::Unit::TestCase
         message['logs'][0]['message'] == 'ういじゅん' }
     end
 
+    test "sanitizes messages with invalid UTF-8 byte sequences" do
+      stub_request(:any, @base_uri).to_return(status: @vortex_success_code)
+
+      driver = create_driver(@simple_config)
+      driver.run(default_tag: 'test') do
+        driver.feed({ :message => "foo \xff bar".force_encoding(Encoding::UTF_8) })
+      end
+
+      assert_requested(:post, @base_uri) { |request|
+        message = parsed_gzipped_json(request.body)
+        message['logs'][0]['message'] == "foo ? bar" }
+    end
+
+    test "sanitizes binary-encoded attribute values" do
+      stub_request(:any, @base_uri).to_return(status: @vortex_success_code)
+
+      driver = create_driver(@simple_config)
+      driver.run(default_tag: 'test') do
+        # "\xe3\x81\x82" is a valid UTF-8 sequence ("あ") and must be preserved
+        driver.feed({ :message => "Test message", :other => "\xff \xe3\x81\x82 binary".b })
+      end
+
+      assert_requested(:post, @base_uri) { |request|
+        message = parsed_gzipped_json(request.body)
+        message['logs'][0]['message'] == 'Test message' &&
+        message['logs'][0]['attributes']['other'] == "? あ binary" }
+    end
+
     test "handles messages without a 'message' field" do
       stub_request(:any, @base_uri).to_return(status: @vortex_success_code)
 

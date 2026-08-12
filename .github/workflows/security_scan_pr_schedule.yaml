@@ -1,0 +1,33 @@
+name: Security Scan
+
+on:
+  pull_request:
+    branches: [master, main]
+  pull_request_target:
+    types: [opened, reopened]
+  schedule:
+    # Every day at 11:30 AM IST (6:00 AM UTC)
+    - cron: "0 6 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  dependabot-notify:
+    name: Notify Slack on Dependabot PR
+    # IMPORTANT: This job uses pull_request_target which has full secrets access.
+    # Do NOT add a `checkout` step here — that would run PR-supplied code with secrets.
+    # This job's only purpose is to POST to Slack with metadata; nothing else.
+    if: github.event_name == 'pull_request_target' && github.actor == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Notify Slack
+        uses: slackapi/slack-github-action@37ebaef184d7626c5f204ab8d3baff4262dd30f0 # v1.27.0
+        with:
+          payload: |
+            {
+              "text": ":robot_face: Dependabot opened a PR in ${{ github.repository }}\nTitle: ${{ github.event.pull_request.title }}\nPR: ${{ github.event.pull_request.html_url }}"
+            }
+        env:
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_TRIVY_WEBHOOK_URL }}

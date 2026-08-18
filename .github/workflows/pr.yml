@@ -2,17 +2,23 @@ name: New Relic Fluentd Output Plugin - Pull Request
 
 on: [pull_request]
 
+permissions:
+  contents: read
+
 jobs:
   ci:
     name: Continuous Integration pipeline
-    runs-on: ubuntu-20.04
+    runs-on: ubuntu-24.04
+    permissions:
+      checks: write
+      pull-requests: write
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@0717577d45739eb3c851188b29f50ed6c0b2194e # v2
 
       - name: Setup Ruby, bundler and install dependencies
-        uses: ruby/setup-ruby@v1
+        uses: ruby/setup-ruby@95ef2b042f9d7a56d8268cba8559e2842e2ad01b # v1.321.0
         with:
           ruby-version: ruby-2.5.8
           bundler-cache: true # runs 'bundle install' and caches installed gems automatically
@@ -21,7 +27,7 @@ jobs:
         run: bundle exec rake
 
       - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@v1.19
+        uses: EnricoMi/publish-unit-test-result-action@95a3aff882d4abe2838b187c66477be7fbf3ddb8 # v1.19
         if: always()
         with:
           files: '**/TEST-*.xml'

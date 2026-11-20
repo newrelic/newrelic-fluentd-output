@@ -27,7 +27,7 @@ jobs:
         run: bundle exec rake
 
       - name: Publish Unit Test Results
-        uses: EnricoMi/publish-unit-test-result-action@95a3aff882d4abe2838b187c66477be7fbf3ddb8 # v1.19
+        uses: EnricoMi/publish-unit-test-result-action@4e7013f9576bd22ffdae979dc6e68cb9ec2aeece # v2.7.0
         if: always()
         with:
           files: '**/TEST-*.xml'
